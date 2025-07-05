@@ -12,6 +12,87 @@ import {
 } from "chart.js";
 import { db } from "../Services/firebase";
 import { ref, onValue, set } from "firebase/database";
+import { get, child } from "firebase/database";
+
+const [dashboardName, setDashboardName] = useState("");
+const [savedDashboards, setSavedDashboards] = useState([]);
+{/* Save Dashboard */}
+<div className="mt-6 bg-gray-50 p-4 rounded shadow">
+  <h3 className="font-semibold mb-2">💾 Save Current Dashboard</h3>
+  <input
+    type="text"
+    placeholder="Enter dashboard name"
+    value={dashboardName}
+    onChange={(e) => setDashboardName(e.target.value)}
+    className="w-full p-2 border rounded mb-2"
+  />
+  <button
+    onClick={handleSaveDashboard}
+    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+  >
+    Save Dashboard
+  </button>
+</div>
+
+{/* Load Dashboard */}
+<div className="mt-4 bg-gray-50 p-4 rounded shadow">
+  <h3 className="font-semibold mb-2">📂 Load Saved Dashboard</h3>
+  <select
+    value=""
+    onChange={(e) => handleLoadDashboard(e.target.value)}
+    className="w-full p-2 border rounded"
+  >
+    <option value="">-- Select Dashboard --</option>
+    {savedDashboards.map((name, i) => (
+      <option key={i} value={name}>{name}</option>
+    ))}
+  </select>
+</div>
+const handleSaveDashboard = async () => {
+  if (!dashboardName || !labels.length) return alert("Missing dashboard name or data");
+
+  const chartRef = ref(db, "chartData");
+  const commentsRef = ref(db, "comments");
+
+  const [chartSnap, commentsSnap] = await Promise.all([
+    get(chartRef),
+    get(commentsRef),
+  ]);
+
+  const dashboardData = {
+    chartData: chartSnap.val(),
+    comments: commentsSnap.val(),
+  };
+
+  const saveRef = ref(db, `dashboards/${user.uid}/${dashboardName}`);
+  await set(saveRef, dashboardData);
+
+  alert("Dashboard saved!");
+  fetchDashboards(); // refresh list
+};
+
+const handleLoadDashboard = async (name) => {
+  const snap = await get(ref(db, `dashboards/${user.uid}/${name}`));
+  const data = snap.val();
+  if (!data) return;
+
+  await set(ref(db, "chartData"), data.chartData || {});
+  await set(ref(db, "comments"), data.comments || {});
+};
+
+const fetchDashboards = async () => {
+  const snap = await get(ref(db, `dashboards/${user.uid}`));
+  if (snap.exists()) {
+    setSavedDashboards(Object.keys(snap.val()));
+  }
+};
+
+useEffect(() => {
+  if (user?.uid) {
+    fetchDashboards();
+  }
+}, [user]);
+
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
