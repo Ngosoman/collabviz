@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-
 import {
   Chart as ChartJS,
   LineElement,
@@ -15,7 +14,6 @@ import {
   ref,
   onValue,
   set,
-  push,
   get,
 } from "firebase/database";
 import CommentBox from "./CommentBox";
@@ -72,7 +70,7 @@ const ChartDisplay = ({ user }) => {
     await set(saveRef, dashboardData);
 
     alert("Dashboard saved!");
-    fetchDashboards(); // refresh list
+    fetchDashboards();
   };
 
   const handleLoadDashboard = async (name) => {
@@ -117,7 +115,7 @@ const ChartDisplay = ({ user }) => {
   };
 
   return (
-    <div className="p-4 bg-white rounded-xl shadow-md">
+    <div className="p-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl shadow-md">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">📊 Live Chart Dashboard</h2>
         <button
@@ -136,7 +134,7 @@ const ChartDisplay = ({ user }) => {
         <select
           value={selectedLabel}
           onChange={(e) => setSelectedLabel(e.target.value)}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full bg-white dark:bg-gray-700 dark:text-gray-100"
         >
           <option value="">-- choose a day --</option>
           {labels.map((label, idx) => (
@@ -149,14 +147,14 @@ const ChartDisplay = ({ user }) => {
       </div>
 
       {/* Save Dashboard */}
-      <div className="mt-6 bg-gray-50 p-4 rounded shadow">
+      <div className="mt-6 bg-gray-100 dark:bg-gray-700 p-4 rounded shadow">
         <h3 className="font-semibold mb-2">💾 Save Current Dashboard</h3>
         <input
           type="text"
           placeholder="Enter dashboard name"
           value={dashboardName}
           onChange={(e) => setDashboardName(e.target.value)}
-          className="w-full p-2 border rounded mb-2"
+          className="w-full p-2 border rounded mb-2 bg-white dark:bg-gray-800 dark:text-white"
         />
         <button
           onClick={handleSaveDashboard}
@@ -167,16 +165,18 @@ const ChartDisplay = ({ user }) => {
       </div>
 
       {/* Load Dashboard */}
-      <div className="mt-4 bg-gray-50 p-4 rounded shadow">
+      <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded shadow">
         <h3 className="font-semibold mb-2">📂 Load Saved Dashboard</h3>
         <select
           value=""
           onChange={(e) => handleLoadDashboard(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded bg-white dark:bg-gray-800 dark:text-white"
         >
           <option value="">-- Select Dashboard --</option>
           {savedDashboards.map((name, i) => (
-            <option key={i} value={name}>{name}</option>
+            <option key={i} value={name}>
+              {name}
+            </option>
           ))}
         </select>
       </div>
