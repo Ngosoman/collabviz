@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+import CommentBox from "./CommentBox";
+
 import {
   Chart as ChartJS,
   LineElement,
