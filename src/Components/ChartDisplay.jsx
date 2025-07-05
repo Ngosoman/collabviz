@@ -61,20 +61,39 @@ const ChartDisplay = ({ user }) => {
     },
   };
 
+  const [selectedLabel, setSelectedLabel] = useState("");
+
+
   return (
-    <div className="p-4 bg-white rounded-xl shadow-md">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold">📈 Live Chart</h2>
-        <button
-          onClick={updateData}
-          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Randomize Data
-        </button>
-      </div>
-      <Line data={data} options={options} />
+  <div className="p-4 bg-white rounded-xl shadow-md">
+    <div className="flex justify-between items-center mb-2">
+      <h2 className="text-lg font-semibold">📈 Live Chart</h2>
+      <button
+        onClick={updateData}
+        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Randomize Data
+      </button>
     </div>
-  );
-};
+    <Line data={data} options={options} />
+    <div className="mt-4">
+      <label className="block text-sm font-medium mb-1">🗓 Select Day to Comment On:</label>
+      <select
+        value={selectedLabel}
+        onChange={(e) => setSelectedLabel(e.target.value)}
+        className="border p-2 rounded w-full"
+      >
+        <option value="">-- choose a day --</option>
+        {labels.map((label, idx) => (
+          <option key={idx} value={label}>
+            {label}
+          </option>
+        ))}
+      </select>
+      {selectedLabel && <CommentBox label={selectedLabel} userEmail={user.email} />}
+    </div>
+  </div>
+);
+}
 
 export default ChartDisplay;
